@@ -14,7 +14,6 @@ const AppLayout: React.FC = () => {
             <div className={styles.content}>
                 <Outlet/>
             </div>
-
             <SafeArea position='bottom'/>
         </div>
     )

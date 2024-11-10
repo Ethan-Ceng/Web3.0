@@ -3,20 +3,20 @@ import Login from '@/views/login/Login.tsx'
 import Error404 from '@/views/Error404.tsx'
 import NotFound from '@/views/NotFound.tsx'
 import Layout from '@/layout'
-import Welcome from '@/views/Welcome.tsx'
+import Home from '@/views/home'
 
 
 const router = [
   {
     path: '/',
-    element: <Navigate to='/welcome' replace />,
+    element: <Navigate to='/index' replace />,
   },
   {
     element: <Layout />,
     children: [
       {
-        path: '/welcome',
-        element: <Welcome />
+        path: '/index',
+        element: <Home />
       },
     ]
   },

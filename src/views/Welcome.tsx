@@ -8,22 +8,13 @@ const Welcome = () => {
     setBears(bears+1)
   }
   return (
-    <Tabs>
-      <Tabs.Tab title='水果' key='fruits'>
-        菠萝
-      </Tabs.Tab>
-      <Tabs.Tab title='蔬菜' key='vegetables'>
-        西红柿
-      </Tabs.Tab>
+    <Tabs className={}>
+      <Tabs.Tab title='Swap' key='swap'></Tabs.Tab>
+      <Tabs.Tab title='Limit' key='limit'></Tabs.Tab>
       <Tabs.Tab
-        title={
-          <Badge content='1' style={{ '--right': '-10px', '--top': '8px' }}>
-            动物
-          </Badge>
-        }
-        key='animals'
+        title='DCA'
+        key='dca'
       >
-        蚂蚁
       </Tabs.Tab>
     </Tabs>
   )

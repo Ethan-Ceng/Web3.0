@@ -1,0 +1,165 @@
+.tabs {
+  :global {
+    .adm-tabs-header {
+      border-bottom: none;
+    }
+
+    .adm-tabs-tab-line {
+      background: #ffffff;
+    }
+
+    .adm-tabs-tab-active {
+      color: #ffffff;
+    }
+  }
+}
+
+.container {
+  padding: 20px 0;
+
+  .toolBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+
+    .left {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      height: 26px;
+      background-color: #121212;
+      cursor: pointer;
+    }
+
+    .right {
+      flex: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .toolItem {
+      cursor: pointer;
+      margin-left: 12px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      height: 26px;
+      min-width: 26px;
+      display: inline-flex;
+      align-items: center;
+      box-sizing: border-box;
+      background-color: #121212;
+    }
+  }
+
+  .trade {
+    .tradeItem {
+      padding: 30px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+
+      .tradeNum {
+        .tradeTotal {
+          margin-top: 6px;
+          font-size: 28px;
+        }
+      }
+
+      .tradeBalance {
+        text-align: right;
+
+        .tradeExchange {
+          margin-top: 6px;
+          display: inline-flex;
+          align-items: center;
+        }
+      }
+    }
+
+    .traderFooter {
+      padding: 20px 0;
+    }
+  }
+
+  .price {
+    padding: 0 15px;
+
+    .priceHeader {
+
+    }
+
+    .priceItem {
+      padding: 20px 0;
+      margin-bottom: 10px;
+
+      .info {
+        flex: 1;
+
+        .infoMain {
+          display: flex;
+          align-items: center;
+          margin-bottom: 20px;
+
+          .infoMainBox {
+            flex: 1;
+            margin-left: 6px;
+
+            h3 {
+              margin: 0;
+              padding: 0;
+              font-size: 14px;
+              font-weight: 700;
+            }
+
+            p {
+              margin: 0;
+              padding: 0;
+              font-size: 12px;
+              font-weight: 600;
+            }
+          }
+        }
+
+        .infoTag {
+          padding: 0 6px;
+          height: 22px;
+          line-height: 22px;
+          background: #11110F;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          overflow: hidden;
+          border-radius: 6px;
+
+          span {
+            flex: 1;
+          }
+        }
+      }
+
+      .chart {
+        flex: 1;
+        text-align: center;
+
+        .chartTag {
+          display: inline-flex;
+          height: 22px;
+          line-height: 22px;
+          background: #11110F;
+          align-items: center;
+          border-radius: 22px;
+          padding-left: 4px;
+          padding-right: 10px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
