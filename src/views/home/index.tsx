@@ -9,7 +9,7 @@ import IconP from '@/assets/image/icon-p.png'
 import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconSui from '@/assets/image/icon-sui.png'
 
-const Welcome = () => {
+const HomePage = () => {
   const [bears, setBears] = useState(1)
   const increasePopulation = () => {
     setBears(bears + 1)
@@ -217,4 +217,4 @@ const Welcome = () => {
   </>)
 }
 
-export default Welcome
+export default HomePage

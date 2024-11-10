@@ -8,6 +8,9 @@ import IconSui from '@/assets/image/icon-sui.png'
 import IconExchange from '@/assets/image/icon-exchange.png'
 import IconChart from '@/assets/image/icon-chart.png'
 import IconDCA from '@/assets/image/icon-dca.png'
+import IconPool from '@/assets/image/icon-pool.png'
+import IconFarm from '@/assets/image/icon-farm.png'
+import IconVault from '@/assets/image/icon-vault.png'
 
 import IconNode from '@/assets/image/icon-node.png'
 import IconExp from '@/assets/image/icon-exp.png'
@@ -111,12 +114,54 @@ const NavHeader = () => {
               </li>
             </ul>
           </div>
+          <div className={styles.sideMenuSub}>
+            <div className={styles.sideMenuSubTitle}>
+              <span className="mr-12">Earn</span><DownFill fontSize={12} color='#ffffff'/>
+            </div>
+            <ul className={styles.sideMenuSubList}>
+              <li className={styles.sideMenuSubListItem}>
+                <Image
+                  src={IconPool}
+                  width={18}
+                  height={18}
+                  fit='cover'
+                  style={{marginRight: 4}}
+                />
+                <span>Pools</span>
+              </li>
+              <li className={styles.sideMenuSubListItem}>
+                <Image
+                  src={IconFarm}
+                  width={18}
+                  height={18}
+                  fit='cover'
+                  style={{marginRight: 4}}
+                />
+                <span>Farms</span>
+              </li>
+              <li className={styles.sideMenuSubListItem}>
+                <Image
+                  src={IconVault}
+                  width={18}
+                  height={18}
+                  fit='cover'
+                  style={{marginRight: 4}}
+                />
+                <span>Vaults</span>
+              </li>
+            </ul>
+          </div>
 
           <div className={styles.sideMenuItem}>
             <span>xCETUS</span>
           </div>
           <div className={styles.sideMenuItem}>
             <span>Launchpad</span>
+          </div>
+          <div className={styles.sideMenuSub}>
+            <div className={styles.sideMenuSubTitle}>
+              <span className="mr-12">More</span><DownFill fontSize={12} color='#ffffff'/>
+            </div>
           </div>
         </div>
         {/*列表*/}
