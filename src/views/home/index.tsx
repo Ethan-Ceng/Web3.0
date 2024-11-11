@@ -1,5 +1,5 @@
 // import useUser from '@/store/useUser.ts'
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Badge, Button, Checkbox, Grid, Image, Switch, Tabs} from "antd-mobile"
 import styles from './index.module.less'
 import {AppOutline, DownFill, InformationCircleOutline, VideoOutline} from "antd-mobile-icons";
@@ -9,12 +9,36 @@ import IconShare from '@/assets/image/icon-share.png'
 import IconP from '@/assets/image/icon-p.png'
 import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconSui from '@/assets/image/icon-sui.png'
+// 钱包相关
+import {useAccounts, useCurrentAccount, useSuiClient} from "@mysten/dapp-kit";
+import { MIST_PER_SUI } from '@mysten/sui/utils'
+import CoinSelect from "../../components/CoinSelect";
 
 const HomePage = () => {
   const [visibleWallet, setVisibleWallet] = useState(false)
   const closeWalletModal = () => {
     setVisibleWallet(false)
   }
+
+  // 钱包账号
+  const client = useSuiClient();
+  const account = useCurrentAccount();
+
+  async function getCoinBalanceWithParam(address,coin){
+    const balance = await client.getBalance({
+      owner: address,
+      coinType: coin
+    });
+    console.log('BigInt', balance, BigInt(balance.totalBalance) / MIST_PER_SUI)
+    return BigInt(balance.totalBalance) / MIST_PER_SUI;
+  }
+
+  const buyCoinChange = (coinType) => {
+    if (account?.address && coinType) {
+      getCoinBalanceWithParam(account.address,  coinType )
+    }
+  }
+
   return (<>
     <Tabs className={styles.tabs} stretch={false}>
       <Tabs.Tab title='Swap' key='swap'></Tabs.Tab>
@@ -75,17 +99,9 @@ const HomePage = () => {
             <div className={styles.tradeTotal}>0.0</div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>0</span></div>
+            <div>Balance <span className='ml-6'>{buyBalance}</span></div>
             <div className={styles.tradeExchange}>
-              <Image
-                src={IconSui}
-                width={24}
-                height={24}
-                fit='cover'
-                style={{borderRadius: 24}}
-              />
-              <span className="ml-6 mr-12">Sui</span>
-              <DownFill fontSize={12} color='#ffffff'/>
+              <CoinSelect onChange={type => buyCoinChange(type)} />
             </div>
           </div>
         </div>

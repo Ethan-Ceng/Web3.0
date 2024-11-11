@@ -1,7 +1,16 @@
 import React, {useState} from 'react'
 import styles from './index.module.less'
-import {Image, List, Popup} from 'antd-mobile'
-import {AppstoreOutline, BellOutline, DownFill} from "antd-mobile-icons";
+import {Image, Popover, Popup, Toast} from 'antd-mobile'
+import {Action} from 'antd-mobile/es/components/popover'
+import {
+  AntOutline,
+  AppstoreOutline,
+  BellOutline,
+  DownFill,
+  HandPayCircleOutline,
+  ScanningOutline,
+  TransportQRcodeOutline
+} from "antd-mobile-icons";
 import LogoImg from '@/assets/image/logo.png'
 import IconSui from '@/assets/image/icon-sui.png'
 // 菜单icon
@@ -24,7 +33,6 @@ import IconM from '@/assets/image/icon-m.png'
 const NavHeader = () => {
   const [visibleMenu, setVisibleMenu] = useState(false)
 
-
   return (<>
     <div className={styles.navHeader}>
       <div className={styles.logo}>
@@ -45,6 +53,7 @@ const NavHeader = () => {
 
         <DownFill fontSize={12} color='#ffffff'/>
       </div>
+
       <div className={styles.navItem}>
         Connect
       </div>

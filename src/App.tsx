@@ -11,6 +11,7 @@ import '@mysten/dapp-kit/dist/index.css';
 // Config options for the networks you want to connect to
 const {networkConfig} = createNetworkConfig({
   localnet: {url: getFullnodeUrl('localnet')},
+  devnet: {url: getFullnodeUrl('devnet')},
   mainnet: {url: getFullnodeUrl('mainnet')},
 });
 const queryClient = new QueryClient();
@@ -19,7 +20,7 @@ function App() {
   return (
     <ConfigProvider locale={enUS}>
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="mainnet">
+        <SuiClientProvider networks={networkConfig} defaultNetwork="devnet">
           <WalletProvider>
             <RouterProvider router={router}/>
           </WalletProvider>
