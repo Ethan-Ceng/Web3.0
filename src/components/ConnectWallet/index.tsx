@@ -1,7 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import {Grid, Image, Mask} from "antd-mobile";
 import styles from './index.module.less'
 import {CloseOutline} from "antd-mobile-icons";
+import {useSuiClientQuery, ConnectButton, ConnectModal, useCurrentAccount} from '@mysten/dapp-kit';
+
+// ICON
 import IconSui from '@/assets/image/icon-sui.png'
 import IconSuiet from '@/assets/image/icon-suiet.png'
 import IconOkx from '@/assets/image/icon-okx.png'
@@ -12,6 +15,8 @@ import IconBinance from '@/assets/image/icon-binance.png'
 import IconGate from '@/assets/image/icon-gate.png'
 
 const ConnectWallet = ({visible, onClose}) => {
+  const currentAccount = useCurrentAccount();
+  const [open, setOpen] = useState(false);
 
   return (
     <Mask visible={visible} onMaskClick={() => console.log(false)}>
@@ -19,13 +24,14 @@ const ConnectWallet = ({visible, onClose}) => {
         <div className={styles.header}>
           <div className={styles.title}>
             <h3>Connect a Wallet</h3>
-            <p>Please select a wallet to connect to this app:</p>
+            <p>Please select a wallet to connect to this dapp:</p>
           </div>
           <CloseOutline onClick={() => onClose && onClose()} fontSize={22} color="#fff" />
         </div>
+
         <Grid className="container" columns={2} gap={14}>
           <Grid.Item>
-            <div className={styles.walletItem}>
+            <div className={styles.walletItem} onClick={() => setOpen(true)}>
               <Image
                 src={IconSui}
                 width={44}
@@ -38,7 +44,7 @@ const ConnectWallet = ({visible, onClose}) => {
           </Grid.Item>
 
           <Grid.Item>
-            <div className={styles.walletItem}>
+            <div className={styles.walletItem} onClick={() => setOpen(true)}>
               <Image
                 src={IconSuiet}
                 width={44}
@@ -128,9 +134,15 @@ const ConnectWallet = ({visible, onClose}) => {
             </div>
           </Grid.Item>
         </Grid>
-
-
       </div>
+
+      <ConnectModal
+        trigger={
+          <button disabled={!!currentAccount}> {currentAccount ? 'Connected' : 'Connect'}</button>
+        }
+        open={open}
+        onOpenChange={(isOpen) => setOpen(isOpen)}
+      />
     </Mask>
   )
 }
