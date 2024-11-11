@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import {Badge, Button, Checkbox, Grid, Image, Switch, Tabs} from "antd-mobile"
 import styles from './index.module.less'
 import {AppOutline, DownFill, InformationCircleOutline, VideoOutline} from "antd-mobile-icons";
+import ConnectWallet from "@/components/ConnectWallet";
 import IconCopy from '@/assets/image/icon-copy.png'
 import IconShare from '@/assets/image/icon-share.png'
 import IconP from '@/assets/image/icon-p.png'
@@ -10,9 +11,9 @@ import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconSui from '@/assets/image/icon-sui.png'
 
 const HomePage = () => {
-  const [bears, setBears] = useState(1)
-  const increasePopulation = () => {
-    setBears(bears + 1)
+  const [visibleWallet, setVisibleWallet] = useState(false)
+  const closeWalletModal = () => {
+    setVisibleWallet(false)
   }
   return (<>
     <Tabs className={styles.tabs} stretch={false}>
@@ -90,7 +91,7 @@ const HomePage = () => {
         </div>
 
         <div className={styles.traderFooter}>
-          <Button block color='primary' size='large'>
+          <Button block color='primary' size='large' onClick={() => setVisibleWallet(true)}>
             Connect Wallet
           </Button>
         </div>
@@ -213,6 +214,9 @@ const HomePage = () => {
           </Grid>
         </div>
       </div>
+
+    {/* 链接 wallet 弹窗 */}
+      <ConnectWallet visible={visibleWallet} onClose={closeWalletModal} />
     </div>
   </>)
 }
