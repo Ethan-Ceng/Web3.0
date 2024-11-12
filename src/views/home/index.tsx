@@ -13,9 +13,11 @@ import IconSui from '@/assets/image/icon-sui.png'
 import {useAccounts, useCurrentAccount, useSuiClient} from "@mysten/dapp-kit";
 import { MIST_PER_SUI } from '@mysten/sui/utils'
 import CoinSelect from "../../components/CoinSelect";
+import Setting from "../../components/Setting";
 
 const HomePage = () => {
   const [visibleWallet, setVisibleWallet] = useState(false)
+  const [visibleSetting, setVisibleSetting] = useState(false)
   const closeWalletModal = () => {
     setVisibleWallet(false)
   }
@@ -33,6 +35,7 @@ const HomePage = () => {
     return BigInt(balance.totalBalance) / MIST_PER_SUI;
   }
 
+  const [walletBalance, setWalletBalance] = useState()
   const buyCoinChange = (coinType) => {
     if (account?.address && coinType) {
       getCoinBalanceWithParam(account.address,  coinType )
@@ -62,7 +65,7 @@ const HomePage = () => {
           </div>
 
           <div className={styles.toolItem}>
-            <AppOutline fontSize={16} color='#ffffff'/> <span className='ml-6'>5%</span>
+            <AppOutline onClick={() => setVisibleSetting(true)} fontSize={16} color='#ffffff'/> <span className='ml-6'>5%</span>
           </div>
 
           <div className={styles.toolItem}>
@@ -99,7 +102,7 @@ const HomePage = () => {
             <div className={styles.tradeTotal}>0.0</div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>{buyBalance}</span></div>
+            <div>Balance <span className='ml-6'>{walletBalance}</span></div>
             <div className={styles.tradeExchange}>
               <CoinSelect onChange={type => buyCoinChange(type)} />
             </div>
@@ -233,6 +236,8 @@ const HomePage = () => {
 
     {/* 链接 wallet 弹窗 */}
       <ConnectWallet visible={visibleWallet} onClose={closeWalletModal} />
+    {/* 设置弹窗 */}
+    <Setting visible={visibleSetting} />
     </div>
   </>)
 }

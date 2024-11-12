@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Grid, Image, Mask} from "antd-mobile";
 import styles from './index.module.less'
 import {CloseOutline} from "antd-mobile-icons";
-import {useSuiClientQuery, ConnectButton, ConnectModal, useCurrentAccount} from '@mysten/dapp-kit';
+import {useSuiClientQuery, ConnectButton, ConnectModal, useCurrentAccount, useWallets} from '@mysten/dapp-kit';
 
 // ICON
 import IconSui from '@/assets/image/icon-sui.png'
@@ -18,6 +18,12 @@ const ConnectWallet = ({visible, onClose}) => {
   const currentAccount = useCurrentAccount();
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (currentAccount) {
+      setOpen(false)
+      onClose && onClose()
+    }
+  }, [currentAccount])
   return (
     <Mask visible={visible} onMaskClick={() => console.log(false)}>
       <div className={styles.wallet}>
@@ -26,7 +32,7 @@ const ConnectWallet = ({visible, onClose}) => {
             <h3>Connect a Wallet</h3>
             <p>Please select a wallet to connect to this dapp:</p>
           </div>
-          <CloseOutline onClick={() => onClose && onClose()} fontSize={22} color="#fff" />
+          <CloseOutline onClick={() => onClose && onClose()} fontSize={22} color="#fff"/>
         </div>
 
         <Grid className="container" columns={2} gap={14}>

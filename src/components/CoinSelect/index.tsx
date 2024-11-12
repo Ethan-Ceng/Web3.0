@@ -19,10 +19,13 @@ import IconBitget from '@/assets/image/icon-bitget.png'
 import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconBinance from '@/assets/image/icon-binance.png'
 import IconGate from '@/assets/image/icon-gate.png'
-
+import {useWallets} from "@mysten/dapp-kit";
 
 
 const CoinSelect = ({value, defaultList, onChange}) => {
+  const wallets = useWallets();
+
+
   const actions: [] = [
     {
       type: 'USDC',
@@ -117,6 +120,10 @@ const CoinSelect = ({value, defaultList, onChange}) => {
     // const coinType =
     onChange && onChange('0x2::sui::SUI')
   }
+
+  useEffect(() => {
+    console.log({wallets})
+  }, [wallets, selectValue])
 
   return (<>
     <Popover
