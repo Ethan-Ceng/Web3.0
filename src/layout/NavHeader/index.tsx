@@ -28,10 +28,24 @@ import IconLang from '@/assets/image/icon-lang.png'
 import IconX from '@/assets/image/icon-x.png'
 import IconTele from '@/assets/image/icon-tele.png'
 import IconM from '@/assets/image/icon-m.png'
+import {useCurrentAccount} from "@mysten/dapp-kit";
+import ConnectWallet from "../../components/ConnectWallet";
 
 
 const NavHeader = () => {
   const [visibleMenu, setVisibleMenu] = useState(false)
+  const account = useCurrentAccount();
+
+  const [visibleWallet, setVisibleWallet] = useState(false)
+  const showWalletModal = () => {
+    if (!account?.address){
+      setVisibleWallet(true)
+    }
+  }
+
+  const closeWalletModal = () => {
+    setVisibleWallet(false)
+  }
 
   return (<>
     <div className={styles.navHeader}>
@@ -54,8 +68,8 @@ const NavHeader = () => {
         <DownFill fontSize={12} color='#ffffff'/>
       </div>
 
-      <div className={styles.navItem}>
-        Connect
+      <div className={styles.connect} onClick={showWalletModal}>
+        {account?.address ? account.address : 'Connect'}
       </div>
       <div className={styles.navItem}>
         <BellOutline fontSize={22} color='#ffffff'/>
@@ -64,6 +78,8 @@ const NavHeader = () => {
         <AppstoreOutline fontSize={22} color='#ffffff'/>
       </div>
 
+      {/* 链接 wallet 弹窗 */}
+      <ConnectWallet visible={visibleWallet} onClose={closeWalletModal}/>
     </div>
 
     {/* 侧边弹出层 */}

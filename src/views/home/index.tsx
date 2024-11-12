@@ -1,6 +1,6 @@
 // import useUser from '@/store/useUser.ts'
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Checkbox, Grid, Image, Switch, Tabs} from "antd-mobile"
+import {Badge, Button, Checkbox, Grid, Image, Input, Switch, Tabs} from "antd-mobile"
 import styles from './index.module.less'
 import {AppOutline, DownFill, InformationCircleOutline, VideoOutline} from "antd-mobile-icons";
 import ConnectWallet from "@/components/ConnectWallet";
@@ -20,7 +20,7 @@ const HomePage = () => {
   const [visibleWallet, setVisibleWallet] = useState(false)
   // 设置
   const [visibleSetting, setVisibleSetting] = useState(false)
-  const [settingValue, setSettingValue] = useState(false)
+  const [settingValue, setSettingValue] = useState(0.5)
   const closeWalletModal = () => {
     setVisibleWallet(false)
   }
@@ -54,7 +54,24 @@ const HomePage = () => {
     // return BigInt(balance.totalBalance) / coinMeta.decimals;
   }
 
-  const [walletBalance, setWalletBalance] = useState(0)
+  const [sellTotal, setSellTotal] = useState(0.0)
+  const [sellBalance, setSellBalance] = useState(0)
+  const sellCoinChange = async (coinType) => {
+    /**
+     * {
+     *   name: "Sui",
+     *   type: "0x2::sui::SUI"
+     * }
+     */
+    console.log('getBanlance', account, coinType)
+    if (account?.address && coinType) {
+      const balance = await getCoinBalanceWithParam(account.address, coinType)
+      setSellBalance(balance)
+    }
+  }
+
+  const [buyTotal, setBuyTotal] = useState(0.0)
+  const [buyBalance, setBuyBalance] = useState(0)
   const buyCoinChange = async (coinType) => {
     /**
      * {
@@ -65,7 +82,7 @@ const HomePage = () => {
     console.log('getBanlance', account, coinType)
     if (account?.address && coinType) {
       const balance = await getCoinBalanceWithParam(account.address, coinType)
-      setWalletBalance(balance)
+      setBuyBalance(balance)
     }
   }
 
@@ -79,26 +96,27 @@ const HomePage = () => {
     <div className={styles.container}>
       {/* 工具条 */}
       <div className={styles.toolBar}>
-        <div className={styles.left}>
-          <span className='mr-6'>Aggregator Mode </span>
-          <Switch style={{
-            '--height': '16px',
-            '--width': '30px'
-          }}/>
-        </div>
+        <div></div>
+        {/*<div className={styles.left}>*/}
+        {/*  <span className='mr-6'>Aggregator Mode </span>*/}
+        {/*  <Switch style={{*/}
+        {/*    '--height': '16px',*/}
+        {/*    '--width': '30px'*/}
+        {/*  }}/>*/}
+        {/*</div>*/}
         <div className={styles.right}>
-          <div className={styles.toolItem}>
-            <AppOutline fontSize={16} color='#ffffff'/>
-          </div>
+          {/*<div className={styles.toolItem}>*/}
+          {/*  <AppOutline fontSize={16} color='#ffffff'/>*/}
+          {/*</div>*/}
 
           <div className={styles.toolItem}>
             <AppOutline onClick={() => setVisibleSetting(true)} fontSize={16} color='#ffffff'/> <span
-            className='ml-6'>5%</span>
+            className='ml-6'>{settingValue}%</span>
           </div>
 
-          <div className={styles.toolItem}>
-            <Checkbox style={{'--icon-size': '14px'}}/>
-          </div>
+          {/*<div className={styles.toolItem}>*/}
+          {/*  <Checkbox style={{'--icon-size': '14px'}}/>*/}
+          {/*</div>*/}
         </div>
       </div>
       {/* 交易区 */}
@@ -106,20 +124,22 @@ const HomePage = () => {
         <div className={styles.tradeItem}>
           <div className={styles.tradeNum}>
             <div>Sell</div>
-            <div className={styles.tradeTotal}>0.0</div>
+            <div className={styles.tradeTotal}>
+              <Input
+                type="number"
+                min={0.1}
+                max={100}
+                value={sellTotal}
+                onChange={val => {
+                  setSellTotal(val)
+                }}
+              />
+            </div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>0</span></div>
+            <div>Balance <span className='ml-6'>{sellBalance }</span></div>
             <div className={styles.tradeExchange}>
-              <Image
-                src={IconUsdc}
-                width={24}
-                height={24}
-                fit='cover'
-                style={{borderRadius: 24}}
-              />
-              <span className="ml-6 mr-12">USDC</span>
-              <DownFill fontSize={12} color='#ffffff'/>
+              <CoinSelect onChange={type => sellCoinChange(type)}/>
             </div>
           </div>
         </div>
@@ -127,10 +147,20 @@ const HomePage = () => {
         <div className={styles.tradeItem}>
           <div className={styles.tradeNum}>
             <div>Buy</div>
-            <div className={styles.tradeTotal}>0.0</div>
+            <div className={styles.tradeTotal}>
+              <Input
+                type="number"
+                min={0.1}
+                max={100}
+                value={buyTotal}
+                onChange={val => {
+                  setBuyTotal(val)
+                }}
+              />
+            </div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>{walletBalance}</span></div>
+            <div>Balance <span className='ml-6'>{buyBalance}</span></div>
             <div className={styles.tradeExchange}>
               <CoinSelect onChange={type => buyCoinChange(type)}/>
             </div>
@@ -138,129 +168,135 @@ const HomePage = () => {
         </div>
 
         <div className={styles.traderFooter}>
-          <Button block color='primary' size='large' onClick={() => setVisibleWallet(true)}>
-            Connect Wallet
-          </Button>
+          {account ? (
+            <Button block color='primary' size='large'>
+              Swap
+            </Button>
+          ): (
+            <Button block color='primary' size='large' onClick={() => setVisibleWallet(true)}>
+              Connect Wallet
+            </Button>
+          )}
         </div>
       </div>
 
       {/* 信息 */}
-      <div className={styles.price}>
-        <div className={styles.priceHeader}>Price Reference <InformationCircleOutline fontSize={12}/></div>
-        <div className={styles.priceItem}>
-          <Grid columns={2} gap={8}>
-            <Grid.Item>
-              <div className={styles.info}>
-                <div className={styles.infoMain}>
-                  <Image
-                    src={IconUsdc}
-                    width={28}
-                    height={28}
-                    fit='cover'
-                    style={{borderRadius: 28}}
-                  />
-                  <div className={styles.infoMainBox}>
-                    <h3>USDC</h3>
-                    <p>Native USDC</p>
-                  </div>
-                </div>
+      {/*<div className={styles.price}>*/}
+      {/*  <div className={styles.priceHeader}>Price Reference <InformationCircleOutline fontSize={12}/></div>*/}
+      {/*  <div className={styles.priceItem}>*/}
+      {/*    <Grid columns={2} gap={8}>*/}
+      {/*      <Grid.Item>*/}
+      {/*        <div className={styles.info}>*/}
+      {/*          <div className={styles.infoMain}>*/}
+      {/*            <Image*/}
+      {/*              src={IconUsdc}*/}
+      {/*              width={28}*/}
+      {/*              height={28}*/}
+      {/*              fit='cover'*/}
+      {/*              style={{borderRadius: 28}}*/}
+      {/*            />*/}
+      {/*            <div className={styles.infoMainBox}>*/}
+      {/*              <h3>USDC</h3>*/}
+      {/*              <p>Native USDC</p>*/}
+      {/*            </div>*/}
+      {/*          </div>*/}
 
-                <div className={styles.infoTag}>
-                  <span className="text-ellipsis">0xdbUSDC USDCUSDCUSDC</span>
-                  <Image
-                    src={IconCopy}
-                    width={12}
-                    height={12}
-                    fit='cover'
-                  />
-                  <Image
-                    className="ml-6"
-                    src={IconShare}
-                    width={12}
-                    height={12}
-                    fit='cover'
-                  />
-                </div>
-              </div>
-            </Grid.Item>
+      {/*          <div className={styles.infoTag}>*/}
+      {/*            <span className="text-ellipsis">0xdbUSDC USDCUSDCUSDC</span>*/}
+      {/*            <Image*/}
+      {/*              src={IconCopy}*/}
+      {/*              width={12}*/}
+      {/*              height={12}*/}
+      {/*              fit='cover'*/}
+      {/*            />*/}
+      {/*            <Image*/}
+      {/*              className="ml-6"*/}
+      {/*              src={IconShare}*/}
+      {/*              width={12}*/}
+      {/*              height={12}*/}
+      {/*              fit='cover'*/}
+      {/*            />*/}
+      {/*          </div>*/}
+      {/*        </div>*/}
+      {/*      </Grid.Item>*/}
 
-            <Grid.Item>
-              <div className={styles.chart}>
-                <div className={styles.chartTag}>
-                  <Image
-                    className="mr-12"
-                    src={IconP}
-                    width={16}
-                    height={16}
-                    fit='cover'
-                    style={{borderRadius: 16}}
-                  />
+      {/*      <Grid.Item>*/}
+      {/*        <div className={styles.chart}>*/}
+      {/*          <div className={styles.chartTag}>*/}
+      {/*            <Image*/}
+      {/*              className="mr-12"*/}
+      {/*              src={IconP}*/}
+      {/*              width={16}*/}
+      {/*              height={16}*/}
+      {/*              fit='cover'*/}
+      {/*              style={{borderRadius: 16}}*/}
+      {/*            />*/}
 
-                  <span className="mr-6">$0.9998</span>
-                  <span className="text-red">-0.01%</span>
-                </div>
-              </div>
-            </Grid.Item>
-          </Grid>
-        </div>
+      {/*            <span className="mr-6">$0.9998</span>*/}
+      {/*            <span className="text-red">-0.01%</span>*/}
+      {/*          </div>*/}
+      {/*        </div>*/}
+      {/*      </Grid.Item>*/}
+      {/*    </Grid>*/}
+      {/*  </div>*/}
 
-        <div className={styles.priceItem}>
-          <Grid columns={2} gap={8}>
-            <Grid.Item>
-              <div className={styles.info}>
-                <div className={styles.infoMain}>
-                  <Image
-                    src={IconUsdc}
-                    width={28}
-                    height={28}
-                    fit='cover'
-                    style={{borderRadius: 28}}
-                  />
-                  <div className={styles.infoMainBox}>
-                    <h3>USDC</h3>
-                    <p>Native USDC</p>
-                  </div>
-                </div>
+      {/*  <div className={styles.priceItem}>*/}
+      {/*    <Grid columns={2} gap={8}>*/}
+      {/*      <Grid.Item>*/}
+      {/*        <div className={styles.info}>*/}
+      {/*          <div className={styles.infoMain}>*/}
+      {/*            <Image*/}
+      {/*              src={IconUsdc}*/}
+      {/*              width={28}*/}
+      {/*              height={28}*/}
+      {/*              fit='cover'*/}
+      {/*              style={{borderRadius: 28}}*/}
+      {/*            />*/}
+      {/*            <div className={styles.infoMainBox}>*/}
+      {/*              <h3>USDC</h3>*/}
+      {/*              <p>Native USDC</p>*/}
+      {/*            </div>*/}
+      {/*          </div>*/}
 
-                <div className={styles.infoTag}>
-                  <span className="text-ellipsis">0xdbUSDC USDCUSDCUSDC</span>
-                  <Image
-                    src={IconCopy}
-                    width={12}
-                    height={12}
-                    fit='cover'
-                  />
-                  <Image
-                    className="ml-6"
-                    src={IconShare}
-                    width={12}
-                    height={12}
-                    fit='cover'
-                  />
-                </div>
-              </div>
-            </Grid.Item>
+      {/*          <div className={styles.infoTag}>*/}
+      {/*            <span className="text-ellipsis">0xdbUSDC USDCUSDCUSDC</span>*/}
+      {/*            <Image*/}
+      {/*              src={IconCopy}*/}
+      {/*              width={12}*/}
+      {/*              height={12}*/}
+      {/*              fit='cover'*/}
+      {/*            />*/}
+      {/*            <Image*/}
+      {/*              className="ml-6"*/}
+      {/*              src={IconShare}*/}
+      {/*              width={12}*/}
+      {/*              height={12}*/}
+      {/*              fit='cover'*/}
+      {/*            />*/}
+      {/*          </div>*/}
+      {/*        </div>*/}
+      {/*      </Grid.Item>*/}
 
-            <Grid.Item>
-              <div className={styles.chart}>
-                <div className={styles.chartTag}>
-                  <Image
-                    className="mr-12"
-                    src={IconP}
-                    width={16}
-                    height={16}
-                    fit='cover'
-                    style={{borderRadius: 16}}
-                  />
+      {/*      <Grid.Item>*/}
+      {/*        <div className={styles.chart}>*/}
+      {/*          <div className={styles.chartTag}>*/}
+      {/*            <Image*/}
+      {/*              className="mr-12"*/}
+      {/*              src={IconP}*/}
+      {/*              width={16}*/}
+      {/*              height={16}*/}
+      {/*              fit='cover'*/}
+      {/*              style={{borderRadius: 16}}*/}
+      {/*            />*/}
 
-                  <span className="mr-6">$1.73</span>
-                  <span className="text-red">-4.56%</span>
-                </div>
-              </div>
-            </Grid.Item>
-          </Grid>
-        </div>
-      </div>
+      {/*            <span className="mr-6">$1.73</span>*/}
+      {/*            <span className="text-red">-4.56%</span>*/}
+      {/*          </div>*/}
+      {/*        </div>*/}
+      {/*      </Grid.Item>*/}
+      {/*    </Grid>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
 
       {/* 链接 wallet 弹窗 */}
       <ConnectWallet visible={visibleWallet} onClose={closeWalletModal}/>

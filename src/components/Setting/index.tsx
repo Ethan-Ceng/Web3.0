@@ -45,6 +45,8 @@ const Setting = ({value, visible, onClose, onOk}) => {
               <div className={styles.walletInput}>
                 <Input
                   type="number"
+                  min={0.1}
+                  max={100}
                   value={setting}
                   onChange={val => {
                     setSetting(val)

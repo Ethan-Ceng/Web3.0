@@ -115,11 +115,11 @@ const CoinSelect = ({value, defaultList, onChange}) => {
     },
     {
       name: "USDC",
-      type: "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN"
+      type: "0x8d710cb7cfb0b038e4476818a6ff2637bc6787a7d5ba74bee93026e89b2f909a::zy::ZY"
     },
     {
       name: "USDT",
-      type: "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN"
+      type: "0x6e7e3898e3d29376dbed82fae09f51eb01724a234af3f7ee2010bcaa51c59174::usdt::USDT"
     },
     {
       name: "Cetus",
