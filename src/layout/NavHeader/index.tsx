@@ -38,7 +38,7 @@ const NavHeader = () => {
 
   const [visibleWallet, setVisibleWallet] = useState(false)
   const showWalletModal = () => {
-    if (!account?.address){
+    if (!account?.address) {
       setVisibleWallet(true)
     }
   }
@@ -46,7 +46,7 @@ const NavHeader = () => {
   const closeWalletModal = () => {
     setVisibleWallet(false)
   }
-
+  console.log({account})
   return (<>
     <div className={styles.navHeader}>
       <div className={styles.logo}>

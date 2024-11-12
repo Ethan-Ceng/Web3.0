@@ -61,7 +61,7 @@ const HomePage = () => {
 
   const [sellTotal, setSellTotal] = useState(0.0)
   const [sellWallet, setSellWallet] = useState({
-    address: '',
+    coinType: '',
     balance: 0
   })
   const sellCoinChange = async (coinType) => {
@@ -74,7 +74,7 @@ const HomePage = () => {
     if (account?.address && coinType) {
       const balance = await getCoinBalanceWithParam(account.address, coinType)
       setSellWallet({
-        address: account.address,
+        coinType,
         balance
       })
     }
@@ -82,7 +82,7 @@ const HomePage = () => {
 
   const [buyTotal, setBuyTotal] = useState(0.0)
   const [buyWallet, setBuyWallet] = useState({
-    address: '',
+    coinType: '',
     balance: 0
   })
   const buyCoinChange = async (coinType) => {
@@ -95,7 +95,7 @@ const HomePage = () => {
     if (account?.address && coinType) {
       const balance = await getCoinBalanceWithParam(account.address, coinType)
       setBuyWallet({
-        address: account.address,
+        coinType,
         balance
       })
     }
@@ -111,9 +111,11 @@ const HomePage = () => {
       return
     }
     const tx = new Transaction();
+    tx.setSender(account?.address)
     const coinAMetadata = await getCoinMetadata(coinSell);
     const divisor = new Decimal(10).pow(coinAMetadata.decimals);
     const coinAout = new Decimal(amount).mul(divisor);
+    console.log({tx, coinAMetadata, divisor, coinAout})
     tx.moveCall({
       target: `${swapPackageId}::interface::swap`,
       arguments: [
@@ -126,13 +128,19 @@ const HomePage = () => {
         coinBuy,
       ],
     });
+    console.log({tx})
     signAndExecuteTransaction(
       {
         transaction: tx
       },
       {
         onSuccess: (result) => {
-          console.log('executed transaction', result);
+          console.log('Executed transaction:', result);
+          Toast.show('Transaction executed successfully!');
+        },
+        onError: (error) => {
+          console.error('Transaction error:', error);
+          Toast.show('Transaction failed!');
         },
       },
     );
@@ -221,7 +229,7 @@ const HomePage = () => {
 
         <div className={styles.traderFooter}>
           {account ? (
-            <Button block color='primary' size='large' onClick={() => handleSwap(sellWallet.address, buyWallet.address, sellTotal, settingValue)}>
+            <Button block color='primary' size='large' onClick={() => handleSwap(sellWallet.coinType, buyWallet.coinType, sellTotal, settingValue)}>
               Swap
             </Button>
           ) : (
