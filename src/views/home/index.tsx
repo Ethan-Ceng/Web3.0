@@ -1,6 +1,6 @@
 // import useUser from '@/store/useUser.ts'
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Checkbox, Grid, Image, Input, Switch, Tabs} from "antd-mobile"
+import {Badge, Button, Checkbox, Grid, Image, Input, Switch, Tabs, Toast} from "antd-mobile"
 import styles from './index.module.less'
 import {AppOutline, DownFill, InformationCircleOutline, VideoOutline} from "antd-mobile-icons";
 import ConnectWallet from "@/components/ConnectWallet";
@@ -9,12 +9,19 @@ import IconShare from '@/assets/image/icon-share.png'
 import IconP from '@/assets/image/icon-p.png'
 import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconSui from '@/assets/image/icon-sui.png'
-// 钱包相关
-import {useAccounts, useCurrentAccount, useSuiClient} from "@mysten/dapp-kit";
-import {MIST_PER_SUI} from '@mysten/sui/utils'
-import Decimal from 'decimal.js'
 import CoinSelect from "../../components/CoinSelect";
 import Setting from "../../components/Setting";
+// 钱包相关
+import {
+  useAccounts,
+  useCurrentAccount,
+  useSuiClient,
+  ConnectButton,
+  ConnectModal,
+  useSignAndExecuteTransaction
+} from "@mysten/dapp-kit";
+import {coinWithBalance, Transaction} from "@mysten/sui/transactions";
+import Decimal from 'decimal.js'
 
 const HomePage = () => {
   const [visibleWallet, setVisibleWallet] = useState(false)
@@ -28,34 +35,35 @@ const HomePage = () => {
   // 钱包账号
   const client = useSuiClient();
   const account = useCurrentAccount();
+  const {mutate: signAndExecuteTransaction} = useSignAndExecuteTransaction();
 
-
+  // 查询代币单位
   async function getCoinMetadata(coinType) {
     const metadata = await client.getCoinMetadata({
       "coinType": coinType
     })
     return metadata;
-
   }
 
+  // 代币余额
   async function getCoinBalanceWithParam(address, coin) {
     const balance = await client.getBalance({
       owner: address,
       coinType: coin
     });
     const coinMeta = await getCoinMetadata(coin)
-    console.log('BigInt', balance, BigInt(balance.totalBalance), coinMeta)
-    //  / MIST_PER_SUI
+    // console.log('BigInt', balance, BigInt(balance.totalBalance), coinMeta)
     const divisor = new Decimal(10).pow(coinMeta.decimals);
     const readableBalance = new Decimal(balance.totalBalance).div(divisor);
-    console.log('Decimal', divisor, readableBalance)
-
+    // console.log('Decimal', divisor, readableBalance)
     return readableBalance.toNumber();
-    // return BigInt(balance.totalBalance) / coinMeta.decimals;
   }
 
   const [sellTotal, setSellTotal] = useState(0.0)
-  const [sellBalance, setSellBalance] = useState(0)
+  const [sellWallet, setSellWallet] = useState({
+    address: '',
+    balance: 0
+  })
   const sellCoinChange = async (coinType) => {
     /**
      * {
@@ -63,15 +71,20 @@ const HomePage = () => {
      *   type: "0x2::sui::SUI"
      * }
      */
-    console.log('getBanlance', account, coinType)
     if (account?.address && coinType) {
       const balance = await getCoinBalanceWithParam(account.address, coinType)
-      setSellBalance(balance)
+      setSellWallet({
+        address: account.address,
+        balance
+      })
     }
   }
 
   const [buyTotal, setBuyTotal] = useState(0.0)
-  const [buyBalance, setBuyBalance] = useState(0)
+  const [buyWallet, setBuyWallet] = useState({
+    address: '',
+    balance: 0
+  })
   const buyCoinChange = async (coinType) => {
     /**
      * {
@@ -79,11 +92,50 @@ const HomePage = () => {
      *   type: "0x2::sui::SUI"
      * }
      */
-    console.log('getBanlance', account, coinType)
     if (account?.address && coinType) {
       const balance = await getCoinBalanceWithParam(account.address, coinType)
-      setBuyBalance(balance)
+      setBuyWallet({
+        address: account.address,
+        balance
+      })
     }
+  }
+
+  // 交易swap
+  const swapPackageId = '0x717a550de67b621fa67c58e9d04c8dca623569ebdbb763a563f15c0891e914a6';
+  const swapShareObject = '0x575a3425baad05f8991639fbf6a58b87a475db423b0f1d95b2c9bf9d14f99441';
+  const handleSwap = async (coinSell, coinBuy, amount, slippage) => {
+    console.log({coinSell, coinBuy, amount, slippage})
+    if (!coinSell || !coinBuy || !amount || !slippage) {
+      Toast.show('please input!')
+      return
+    }
+    const tx = new Transaction();
+    const coinAMetadata = await getCoinMetadata(coinSell);
+    const divisor = new Decimal(10).pow(coinAMetadata.decimals);
+    const coinAout = new Decimal(amount).mul(divisor);
+    tx.moveCall({
+      target: `${swapPackageId}::interface::swap`,
+      arguments: [
+        tx.object(`${swapShareObject}`),
+        tx.object(coinWithBalance({balance: coinAout, type: coinSell})),
+        tx.pure.u64(0),
+      ],
+      typeArguments: [
+        coinSell,
+        coinBuy,
+      ],
+    });
+    signAndExecuteTransaction(
+      {
+        transaction: tx
+      },
+      {
+        onSuccess: (result) => {
+          console.log('executed transaction', result);
+        },
+      },
+    );
   }
 
   return (<>
@@ -137,7 +189,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>{sellBalance }</span></div>
+            <div>Balance <span className='ml-6'>{sellWallet?.balance}</span></div>
             <div className={styles.tradeExchange}>
               <CoinSelect onChange={type => sellCoinChange(type)}/>
             </div>
@@ -160,7 +212,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className={styles.tradeBalance}>
-            <div>Balance <span className='ml-6'>{buyBalance}</span></div>
+            <div>Balance <span className='ml-6'>{buyWallet?.balance}</span></div>
             <div className={styles.tradeExchange}>
               <CoinSelect onChange={type => buyCoinChange(type)}/>
             </div>
@@ -169,10 +221,10 @@ const HomePage = () => {
 
         <div className={styles.traderFooter}>
           {account ? (
-            <Button block color='primary' size='large'>
+            <Button block color='primary' size='large' onClick={() => handleSwap(sellWallet.address, buyWallet.address, sellTotal, settingValue)}>
               Swap
             </Button>
-          ): (
+          ) : (
             <Button block color='primary' size='large' onClick={() => setVisibleWallet(true)}>
               Connect Wallet
             </Button>
