@@ -23,8 +23,10 @@ import {useWallets} from "@mysten/dapp-kit";
 
 
 const CoinSelect = ({value, defaultList, onChange}) => {
-  const wallets = useWallets();
-
+  /**
+   * 切换代币查询余额并返回
+   */
+  // const wallets = useWallets();
 
   const actions: [] = [
     {
@@ -39,6 +41,17 @@ const CoinSelect = ({value, defaultList, onChange}) => {
       text: 'USDC'
     },
     {
+      type: 'USDT',
+      icon: <Image
+        src={IconUsdc}
+        width={24}
+        height={24}
+        fit='cover'
+        style={{borderRadius: 24}}
+      />,
+      text: 'USDT'
+    },
+    {
       type: 'Sui',
       icon: <Image
         src={IconSui}
@@ -49,50 +62,50 @@ const CoinSelect = ({value, defaultList, onChange}) => {
       />,
       text: 'Sui'
     },
-    {
-      type: 'Suiet',
-      icon: <Image
-        src={IconSuiet}
-        width={24}
-        height={24}
-        fit='cover'
-        style={{borderRadius: 24}}
-      />,
-      text: 'Suiet'
-    },
-    {
-      type: 'OKX',
-      icon: <Image
-        src={IconOkx}
-        width={24}
-        height={24}
-        fit='cover'
-        style={{borderRadius: 24}}
-      />,
-      text: 'OKX'
-    },
-    {
-      type: 'Martian',
-      icon: <Image
-        src={IconMartian}
-        width={24}
-        height={24}
-        fit='cover'
-        style={{borderRadius: 24}}
-      />,
-      text: 'Martian'
-    },
-    {
-      type: 'Bitget',
-      icon: <Image
-        src={IconBitget}
-        width={24}
-        height={24}
-        fit='cover'
-        style={{borderRadius: 24}}
-      />,
-      text: 'Bitget'
-    },
+    // {
+    //   type: 'Suiet',
+    //   icon: <Image
+    //     src={IconSuiet}
+    //     width={24}
+    //     height={24}
+    //     fit='cover'
+    //     style={{borderRadius: 24}}
+    //   />,
+    //   text: 'Suiet'
+    // },
+    // {
+    //   type: 'OKX',
+    //   icon: <Image
+    //     src={IconOkx}
+    //     width={24}
+    //     height={24}
+    //     fit='cover'
+    //     style={{borderRadius: 24}}
+    //   />,
+    //   text: 'OKX'
+    // },
+    // {
+    //   type: 'Martian',
+    //   icon: <Image
+    //     src={IconMartian}
+    //     width={24}
+    //     height={24}
+    //     fit='cover'
+    //     style={{borderRadius: 24}}
+    //   />,
+    //   text: 'Martian'
+    // },
+    // {
+    //   type: 'Bitget',
+    //   icon: <Image
+    //     src={IconBitget}
+    //     width={24}
+    //     height={24}
+    //     fit='cover'
+    //     style={{borderRadius: 24}}
+    //   />,
+    //   text: 'Bitget'
+    // },
   ]
 
   const coinTypes = [
@@ -118,12 +131,18 @@ const CoinSelect = ({value, defaultList, onChange}) => {
   const handleSelect = (item) => {
     setSelectValue(item)
     // const coinType =
-    onChange && onChange('0x2::sui::SUI')
+    const typeItem = coinTypes.find(i => i.name === item.type)
+    console.log('setSelectValue', item, typeItem)
+    if (typeItem?.type) {
+      onChange && onChange(typeItem?.type)
+    } else {
+      Toast.show('Type not found!')
+    }
   }
-
-  useEffect(() => {
-    console.log({wallets})
-  }, [wallets, selectValue])
+  //
+  // useEffect(() => {
+  //   console.log({wallets})
+  // }, [wallets, selectValue])
 
   return (<>
     <Popover

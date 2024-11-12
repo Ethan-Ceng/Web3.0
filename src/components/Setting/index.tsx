@@ -3,13 +3,17 @@ import {Grid, Image, Input, Mask} from "antd-mobile";
 import styles from './index.module.less'
 import {CloseOutline} from "antd-mobile-icons";
 
-const Setting = ({value, visible, onClose}) => {
+const Setting = ({value, visible, onClose, onOk}) => {
   const [setting, setSetting] = useState(0.5)
   useEffect(() => {
     if (visible) {
       setSetting(value)
     }
   }, [visible])
+
+  const handleConfirm = () => {
+    onOk && onOk(setting)
+  }
   return (
     <Mask visible={visible} onMaskClick={() => console.log(false)}>
       <div className={styles.wallet}>
@@ -18,7 +22,7 @@ const Setting = ({value, visible, onClose}) => {
             <h3>Settings</h3>
             <p>Slippage Tolerance</p>
           </div>
-          <CloseOutline onClick={() => onClose && onClose(setting)} fontSize={22} color="#fff"/>
+          <CloseOutline onClick={onClose} fontSize={22} color="#fff"/>
         </div>
         <div className={styles.container}>
           <Grid columns={4} gap={0}>
@@ -51,10 +55,10 @@ const Setting = ({value, visible, onClose}) => {
           </Grid>
         </div>
         <div className={styles.footer}>
-          <div className={styles.cancel}>
+          <div className={styles.cancel} onClick={onClose}>
             Cancel
           </div>
-          <div className={styles.confirm}>
+          <div className={styles.confirm} onClick={handleConfirm}>
             Confirm
           </div>
         </div>

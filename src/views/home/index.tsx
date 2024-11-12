@@ -11,13 +11,16 @@ import IconUsdc from '@/assets/image/icon-usdc.png'
 import IconSui from '@/assets/image/icon-sui.png'
 // 钱包相关
 import {useAccounts, useCurrentAccount, useSuiClient} from "@mysten/dapp-kit";
-import { MIST_PER_SUI } from '@mysten/sui/utils'
+import {MIST_PER_SUI} from '@mysten/sui/utils'
+import Decimal from 'decimal.js'
 import CoinSelect from "../../components/CoinSelect";
 import Setting from "../../components/Setting";
 
 const HomePage = () => {
   const [visibleWallet, setVisibleWallet] = useState(false)
+  // 设置
   const [visibleSetting, setVisibleSetting] = useState(false)
+  const [settingValue, setSettingValue] = useState(false)
   const closeWalletModal = () => {
     setVisibleWallet(false)
   }
@@ -26,19 +29,43 @@ const HomePage = () => {
   const client = useSuiClient();
   const account = useCurrentAccount();
 
-  async function getCoinBalanceWithParam(address,coin){
+
+  async function getCoinMetadata(coinType) {
+    const metadata = await client.getCoinMetadata({
+      "coinType": coinType
+    })
+    return metadata;
+
+  }
+
+  async function getCoinBalanceWithParam(address, coin) {
     const balance = await client.getBalance({
       owner: address,
       coinType: coin
     });
-    console.log('BigInt', balance, BigInt(balance.totalBalance) / MIST_PER_SUI)
-    return BigInt(balance.totalBalance) / MIST_PER_SUI;
+    const coinMeta = await getCoinMetadata(coin)
+    console.log('BigInt', balance, BigInt(balance.totalBalance), coinMeta)
+    //  / MIST_PER_SUI
+    const divisor = new Decimal(10).pow(coinMeta.decimals);
+    const readableBalance = new Decimal(balance.totalBalance).div(divisor);
+    console.log('Decimal', divisor, readableBalance)
+
+    return readableBalance.toNumber();
+    // return BigInt(balance.totalBalance) / coinMeta.decimals;
   }
 
-  const [walletBalance, setWalletBalance] = useState()
-  const buyCoinChange = (coinType) => {
+  const [walletBalance, setWalletBalance] = useState(0)
+  const buyCoinChange = async (coinType) => {
+    /**
+     * {
+     *   name: "Sui",
+     *   type: "0x2::sui::SUI"
+     * }
+     */
+    console.log('getBanlance', account, coinType)
     if (account?.address && coinType) {
-      getCoinBalanceWithParam(account.address,  coinType )
+      const balance = await getCoinBalanceWithParam(account.address, coinType)
+      setWalletBalance(balance)
     }
   }
 
@@ -65,7 +92,8 @@ const HomePage = () => {
           </div>
 
           <div className={styles.toolItem}>
-            <AppOutline onClick={() => setVisibleSetting(true)} fontSize={16} color='#ffffff'/> <span className='ml-6'>5%</span>
+            <AppOutline onClick={() => setVisibleSetting(true)} fontSize={16} color='#ffffff'/> <span
+            className='ml-6'>5%</span>
           </div>
 
           <div className={styles.toolItem}>
@@ -104,7 +132,7 @@ const HomePage = () => {
           <div className={styles.tradeBalance}>
             <div>Balance <span className='ml-6'>{walletBalance}</span></div>
             <div className={styles.tradeExchange}>
-              <CoinSelect onChange={type => buyCoinChange(type)} />
+              <CoinSelect onChange={type => buyCoinChange(type)}/>
             </div>
           </div>
         </div>
@@ -118,7 +146,7 @@ const HomePage = () => {
 
       {/* 信息 */}
       <div className={styles.price}>
-        <div className={styles.priceHeader}>Price Reference <InformationCircleOutline fontSize={12} /></div>
+        <div className={styles.priceHeader}>Price Reference <InformationCircleOutline fontSize={12}/></div>
         <div className={styles.priceItem}>
           <Grid columns={2} gap={8}>
             <Grid.Item>
@@ -234,10 +262,11 @@ const HomePage = () => {
         </div>
       </div>
 
-    {/* 链接 wallet 弹窗 */}
-      <ConnectWallet visible={visibleWallet} onClose={closeWalletModal} />
-    {/* 设置弹窗 */}
-    <Setting visible={visibleSetting} />
+      {/* 链接 wallet 弹窗 */}
+      <ConnectWallet visible={visibleWallet} onClose={closeWalletModal}/>
+      {/* 设置弹窗 */}
+      <Setting value={settingValue} visible={visibleSetting} onClose={() => setVisibleSetting(false)}
+               onOk={(val) => setSettingValue(val)}/>
     </div>
   </>)
 }
