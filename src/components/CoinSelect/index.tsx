@@ -11,6 +11,7 @@ import {
   TransportQRcodeOutline
 } from "antd-mobile-icons";
 // icon
+import IconQuestion from '@/assets/image/icon-question.png'
 import IconSui from '@/assets/image/icon-sui.png'
 import IconSuiet from '@/assets/image/icon-suiet.png'
 import IconOkx from '@/assets/image/icon-okx.png'
@@ -175,15 +176,15 @@ const CoinSelect = ({value, defaultList, onChange}) => {
             ? selectValue.icon
             : (
               <Image
-                src={IconSui}
-                width={24}
+                src={IconQuestion}
+                width={22}
                 height={24}
                 fit='cover'
                 style={{borderRadius: 24}}
               />
             )
         }
-        <span className="ml-12 mr-12">{selectValue.text || ''}</span>
+        <span className="ml-12 mr-12">{selectValue.text || 'Select a token'}</span>
         <DownFill fontSize={12} color='#ffffff'/>
       </div>
     </Popover>

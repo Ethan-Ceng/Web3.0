@@ -4,6 +4,7 @@ import Error404 from '@/views/Error404.tsx'
 import NotFound from '@/views/NotFound.tsx'
 import Layout from '@/layout'
 import Home from '@/views/home'
+import Pools from '@/views/pools'
 
 
 const router = [
@@ -17,6 +18,10 @@ const router = [
       {
         path: '/index',
         element: <Home />
+      },
+      {
+        path: '/pools',
+        element: <Pools />
       },
     ]
   },

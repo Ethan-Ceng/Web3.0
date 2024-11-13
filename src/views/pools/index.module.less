@@ -1,0 +1,95 @@
+.headerBack {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.flexRow {
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  padding: 20px 0;
+
+  .toolBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+
+    .left {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .right {
+      flex: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .toolItem {
+      cursor: pointer;
+      margin-left: 12px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      height: 26px;
+      min-width: 26px;
+      display: inline-flex;
+      align-items: center;
+      box-sizing: border-box;
+      background-color: #121212;
+    }
+  }
+
+  .liquidity {
+    .liquidityItem {
+      padding: 30px 15px;
+      font-size: 14px;
+      border-bottom: 1px solid #C1C1C1CC;
+
+      .liquidityItemHeader {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .liquidityTag {
+        display: inline-block;
+        font-size: 10px;
+        background-color: #2775CA;
+        height: 12px;
+        line-height: 12px;
+        padding: 0 4px;
+        border-radius: 12px;
+        margin-right: 10px;
+      }
+
+      .mainList {
+        margin-bottom: 30px;
+
+        .mainListItem {
+          height: 40px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+    }
+
+    .liquidityAdd {
+      height: 44px;
+      line-height: 44px;
+      border: 1px solid #2775CA;
+      font-size: 16px;
+      text-align: center;
+      color: #ffffff;
+      background-color: rgba(0, 0, 0, .5);
+    }
+  }
+
+}
+

@@ -30,9 +30,12 @@ import IconTele from '@/assets/image/icon-tele.png'
 import IconM from '@/assets/image/icon-m.png'
 import {useCurrentAccount} from "@mysten/dapp-kit";
 import ConnectWallet from "../../components/ConnectWallet";
+import {useNavigate} from "react-router-dom";
 
 
 const NavHeader = () => {
+  const navigate = useNavigate();
+
   const [visibleMenu, setVisibleMenu] = useState(false)
   const account = useCurrentAccount();
 
@@ -144,7 +147,7 @@ const NavHeader = () => {
               <span className="mr-12">Earn</span><DownFill fontSize={12} color='#ffffff'/>
             </div>
             <ul className={styles.sideMenuSubList}>
-              <li className={styles.sideMenuSubListItem}>
+              <li className={styles.sideMenuSubListItem} onClick={() => navigate("/pools")}>
                 <Image
                   src={IconPool}
                   width={18}
